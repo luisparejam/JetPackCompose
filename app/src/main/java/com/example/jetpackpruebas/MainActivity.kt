@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,11 +30,14 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MiPrimerComposable(){
-    Row{
-        Text(text="Texto fila 1")
-        Text(text="Texto fila 2")
-    }
     Column(modifier = Modifier.fillMaxSize().padding(top=35.dp)){
+        Row{
+            Text(text="Texto fila 1")
+            Text(text="Texto fila 2")
+        }
+
+        Spacer(modifier=Modifier.height(35.dp))
+
         Text(text="Hola alumnos de Kotlin")
         Text(text="Este es nuestro primer composable")
     }

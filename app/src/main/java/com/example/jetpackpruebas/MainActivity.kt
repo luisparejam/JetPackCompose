@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,8 +13,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,7 +57,10 @@ fun MiPrimerComposable(){
 
 @Composable
 fun MiSegundoComposable(){
-    Box(modifier=Modifier.fillMaxSize().padding(16.dp)){
+
+    var colorFondo by remember{ mutableStateOf(Color.White) }
+
+    Box(modifier=Modifier.fillMaxSize().padding(16.dp).background(colorFondo)){
         /* Text(text="Hola arriba izquierda", modifier=Modifier.align(Alignment.TopStart))
         Text(text="Hola centrado", modifier=Modifier.align(Alignment.Center))
         Text(text="Hola abajo derecha", modifier=Modifier.align(Alignment.BottomEnd)) */
@@ -67,7 +76,19 @@ fun MiSegundoComposable(){
             , color = Color.Red
             , textAlign = TextAlign.Center
             , modifier = Modifier.align(Alignment.Center))
+
+        // Boton en la parte superior izquierda
+        Button(onClick={colorFondo=colorAleatorio()},
+            modifier=Modifier.align(Alignment.TopStart))
+        {Text(text="Fondo")}
     }
+}
+
+fun colorAleatorio():Color{
+    val rojo=(0..255).random()
+    val verde=(0..255).random()
+    val azul=(0..255).random()
+    return Color(red=rojo, green=verde, blue=azul)
 }
 
 @Preview

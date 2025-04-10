@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -67,7 +68,20 @@ fun MiSegundoComposable(){
 
     var posicionTexto by remember{ mutableStateOf(Offset(x=0f,y=0f)) }
 
-    Box(modifier=Modifier.fillMaxSize().padding(16.dp).background(colorFondo)){
+    var anchoPantalla by remember{ mutableStateOf(0f)}
+
+    var altoPantalla by remember{ mutableStateOf(0f)}
+
+    var anchoTexto by remember { mutableStateOf(0f) }
+
+    var altoTexto by remember { mutableStateOf(0f) }
+
+    Box(modifier=Modifier.fillMaxSize().padding(16.dp).background(colorFondo).
+    onGloballyPositioned { coordinates ->
+        anchoPantalla=coordinates.size.width.toFloat()
+        altoPantalla=coordinates.size.height.toFloat()
+
+    }){
         /* Text(text="Hola arriba izquierda", modifier=Modifier.align(Alignment.TopStart))
         Text(text="Hola centrado", modifier=Modifier.align(Alignment.Center))
         Text(text="Hola abajo derecha", modifier=Modifier.align(Alignment.BottomEnd)) */
@@ -83,7 +97,16 @@ fun MiSegundoComposable(){
             color = Color.Red,
             textAlign = TextAlign.Center,
             //modifier = Modifier.align(Alignment.Center)
-            modifier = Modifier
+            modifier = Modifier.onGloballyPositioned {coordinates ->
+                anchoTexto=coordinates.size.width.toFloat()
+                altoTexto=coordinates.size.height.toFloat()
+
+                // Centrar elemento
+                if(posicionTexto==Offset(0f,0f)){
+                    posicionTexto=Offset((anchoPantalla-anchoTexto)/2, (altoPantalla-altoTexto)/2)
+                }
+
+            }
                 .offset{
                     IntOffset(posicionTexto.x.toInt(), posicionTexto.y.toInt()) }
                 .pointerInput(Unit){

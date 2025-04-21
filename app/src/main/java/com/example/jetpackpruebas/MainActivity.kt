@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
@@ -48,7 +50,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MiPrimerComposable(){
-    Column(modifier = Modifier.fillMaxSize().padding(top=35.dp)){
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(top = 35.dp)){
         Row{
             Text(text="Texto fila 1")
             Text(text="Texto fila 2")
@@ -76,50 +80,85 @@ fun MiSegundoComposable(){
 
     var altoTexto by remember { mutableStateOf(0f) }
 
-    Box(modifier=Modifier.fillMaxSize().padding(16.dp).background(colorFondo).
-    onGloballyPositioned { coordinates ->
-        anchoPantalla=coordinates.size.width.toFloat()
-        altoPantalla=coordinates.size.height.toFloat()
+    Box(modifier=Modifier
+        .fillMaxSize()
+        .padding(16.dp)
+        .background(colorFondo)
+        .onGloballyPositioned { coordinates ->
+            anchoPantalla = coordinates.size.width.toFloat()
+            altoPantalla = coordinates.size.height.toFloat()
 
-    }){
+        }){
         /* Text(text="Hola arriba izquierda", modifier=Modifier.align(Alignment.TopStart))
         Text(text="Hola centrado", modifier=Modifier.align(Alignment.Center))
         Text(text="Hola abajo derecha", modifier=Modifier.align(Alignment.BottomEnd)) */
 
-        Image(
+        /*Image(
             painter = painterResource(id = R.drawable.demo),
             modifier = Modifier.align(Alignment.Center).fillMaxSize(),
             contentDescription = "Coca-Cola"
-        )
+        )*/
+
+        ImagenInteractiva()
 
         Text(text = "Coca-Cola",
             fontSize = 24.sp,
             color = Color.Red,
             textAlign = TextAlign.Center,
             //modifier = Modifier.align(Alignment.Center)
-            modifier = Modifier.onGloballyPositioned {coordinates ->
-                anchoTexto=coordinates.size.width.toFloat()
-                altoTexto=coordinates.size.height.toFloat()
+            modifier = Modifier
+                .onGloballyPositioned { coordinates ->
+                    anchoTexto = coordinates.size.width.toFloat()
+                    altoTexto = coordinates.size.height.toFloat()
 
-                // Centrar elemento
-                if(posicionTexto==Offset(0f,0f)){
-                    posicionTexto=Offset((anchoPantalla-anchoTexto)/2, (altoPantalla-altoTexto)/2)
+                    // Centrar elemento
+                    if (posicionTexto == Offset(0f, 0f)) {
+                        posicionTexto =
+                            Offset((anchoPantalla - anchoTexto) / 2, (altoPantalla - altoTexto) / 2)
+                    }
+
                 }
-
-            }
-                .offset{
-                    IntOffset(posicionTexto.x.toInt(), posicionTexto.y.toInt()) }
-                .pointerInput(Unit){
+                .offset {
+                    IntOffset(posicionTexto.x.toInt(), posicionTexto.y.toInt())
+                }
+                .pointerInput(Unit) {
                     detectDragGestures { change, dragAmount ->
                         change.consume()
-                        posicionTexto+=Offset(dragAmount.x, dragAmount.y)
-                    }}
+                        posicionTexto += Offset(dragAmount.x, dragAmount.y)
+                    }
+                }
             )
 
         // Boton en la parte superior izquierda
         Button(onClick={colorFondo=colorAleatorio()},
             modifier=Modifier.align(Alignment.TopStart))
         {Text(text="Fondo")}
+    }
+}
+
+@Composable
+fun ImagenInteractiva(){
+
+    var escala by remember { mutableStateOf(1f) }
+    var posicion by remember { mutableStateOf (Offset(0f,0f))}
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .pointerInput(Unit) {
+            detectTransformGestures { _, desplazamiento, zoom, _ ->
+                escala *= zoom
+                posicion += desplazamiento
+            }
+        }, contentAlignment = Alignment.Center) {
+        Image(
+            painter = painterResource(id = R.drawable.demo),
+            contentDescription = "Coca-Cola",
+            modifier = Modifier.graphicsLayer (scaleX = escala.coerceIn(0.5f,3f),
+                scaleY = escala.coerceIn(0.5f, 3f),
+                translationX = posicion.x,
+                translationY = posicion.y
+
+            )
+        )
     }
 }
 

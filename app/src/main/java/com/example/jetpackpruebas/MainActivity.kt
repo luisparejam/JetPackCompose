@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -139,14 +140,26 @@ fun MiSegundoComposable(){
 @Composable
 fun ImagenInteractiva(){
 
-    var escala by remember { mutableStateOf(1f) }
-    var posicion by remember { mutableStateOf (Offset(0f,0f))}
+    var escala by remember { mutableStateOf(1f) } // Escala de la imagen
+    var posicion by remember { mutableStateOf (Offset(0f,0f))} // Posicion de la imagen
+    var rotacion by remember { mutableStateOf(0f) } // Angulo de rotacion de la imagen
+
     Box(modifier = Modifier
         .fillMaxSize()
         .pointerInput(Unit) {
-            detectTransformGestures { _, desplazamiento, zoom, _ ->
-                escala *= zoom
-                posicion += desplazamiento
+            detectTransformGestures { _, desplazamiento, zoom, cambioRotacion ->
+                escala *= zoom // Aplicar zoom
+                posicion += desplazamiento // Aplicar desplazamientos
+                rotacion += cambioRotacion // Aplicar rotacion
+            }
+        }
+        .pointerInput(Unit) {
+            detectTapGestures(onDoubleTap = {
+                escala=1f
+                posicion=Offset(0f,0f)
+                rotacion=0f
+            }) {
+
             }
         }, contentAlignment = Alignment.Center) {
         Image(
@@ -155,7 +168,8 @@ fun ImagenInteractiva(){
             modifier = Modifier.graphicsLayer (scaleX = escala.coerceIn(0.5f,3f),
                 scaleY = escala.coerceIn(0.5f, 3f),
                 translationX = posicion.x,
-                translationY = posicion.y
+                translationY = posicion.y,
+                rotationZ = rotacion
 
             )
         )

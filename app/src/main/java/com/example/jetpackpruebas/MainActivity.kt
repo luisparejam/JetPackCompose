@@ -4,6 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateOffsetAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -144,6 +148,12 @@ fun ImagenInteractiva(){
     var posicion by remember { mutableStateOf (Offset(0f,0f))} // Posicion de la imagen
     var rotacion by remember { mutableStateOf(0f) } // Angulo de rotacion de la imagen
 
+    // Animaciones suaves hacia valores iniciales
+
+    val escalaAnimada by animateFloatAsState(targetValue = escala, animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing))
+    val rotacionAnimada by animateFloatAsState(targetValue = rotacion, animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing))
+    val posicionAnimada by animateOffsetAsState(targetValue = posicion, animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing))
+
     Box(modifier = Modifier
         .fillMaxSize()
         .pointerInput(Unit) {
@@ -165,11 +175,11 @@ fun ImagenInteractiva(){
         Image(
             painter = painterResource(id = R.drawable.demo),
             contentDescription = "Coca-Cola",
-            modifier = Modifier.graphicsLayer (scaleX = escala.coerceIn(0.5f,3f),
-                scaleY = escala.coerceIn(0.5f, 3f),
-                translationX = posicion.x,
-                translationY = posicion.y,
-                rotationZ = rotacion
+            modifier = Modifier.graphicsLayer (scaleX = escalaAnimada.coerceIn(0.5f,3f),
+                scaleY = escalaAnimada.coerceIn(0.5f, 3f),
+                translationX = posicionAnimada.x,
+                translationY = posicionAnimada.y,
+                rotationZ = rotacionAnimada
 
             )
         )
